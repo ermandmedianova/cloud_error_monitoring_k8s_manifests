@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: glitchtip-create-superuser
+  labels:
+    app: glitchtip-superuser-job
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: create-superuser
+        image: ermand172/glitchtip-backend:db47644ac12cc7d1
+        command: ["sh", "-c", "./manage.py createsuperuser --noinput --email $DJANGO_SUPERUSER_EMAIL || echo 'Superuser already exists or creation failed'"]
+        envFrom:
+        - configMapRef:
+            name: glitchtip-config
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: secret-key
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: database-password
+        - name: DJANGO_SUPERUSER_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: django-superuser-email
+        - name: DJANGO_SUPERUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: django-superuser-password

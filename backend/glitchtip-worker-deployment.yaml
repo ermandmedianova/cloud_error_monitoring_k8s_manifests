@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glitchtip-worker
+  labels:
+    app: glitchtip-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glitchtip-worker
+  template:
+    metadata:
+      labels:
+        app: glitchtip-worker
+    spec:
+      containers:
+      - name: glitchtip-worker
+        image: ermand172/glitchtip-backend:db47644ac12cc7d1
+        envFrom:
+        - configMapRef:
+            name: glitchtip-config
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: secret-key
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: database-password
+        - name: SERVER_ROLE
+          value: "worker_with_beat"
+        - name: IS_CELERY
+          value: "true"
+        # AI Platform Configuration
+        - name: AI_PLATFORM
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: ai-platform
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: anthropic-api-key
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: openai-api-key
+        - name: OPENAI_MODEL
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: openai-model
+        - name: ANTHROPIC_MODEL
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: anthropic-model
+        # ClickUp Integration
+        - name: CLICKUP_API_URL
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: clickup-api-url
+        - name: CLICKUP_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: clickup-api-token
+        - name: CLICKUP_LIST_ID
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: clickup-list-id
+        - name: CLICKUP_PARENT_TASK_ID
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: clickup-parent-task-id
+        - name: CLICKUP_ASSIGNEE_ID
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: clickup-assignee-id
+        # Celery Worker Configuration
+        - name: CELERY_WORKER_CONCURRENCY
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: celery-worker-concurrency
+        - name: CELERY_WORKER_PREFETCH_MULTIPLIER
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: celery-worker-prefetch-multiplier
+        - name: CELERY_WORKER_POOL
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: celery-worker-pool
+        - name: CELERY_SKIP_CHECKS
+          valueFrom:
+            secretKeyRef:
+              name: glitchtip-secrets
+              key: celery-skip-checks
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: media-storage
+          mountPath: /code/uploads
+      volumes:
+      - name: media-storage
+        persistentVolumeClaim:
+          claimName: glitchtip-media-pvc

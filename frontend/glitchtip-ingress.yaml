@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: glitchtip-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    # SSL Redirect (uncomment if you have cert-manager)
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx  # Change this to your ingress class
+  # TLS Configuration (uncomment and configure if you have SSL)
+  # tls:
+  # - hosts:
+  #   - glitchtip.example.com
+  #   secretName: glitchtip-tls
+  rules:
+  - host: glitchtip.medianova.com  # Change this to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: glitchtip-frontend
+            port:
+              number: 80
