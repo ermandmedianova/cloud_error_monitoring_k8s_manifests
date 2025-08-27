@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: glitchtip-worker
-        image: ermand172/glitchtip-backend:db47644ac12cc7d1
+        image: ermand172/glitchtip-backend:a672692e53914a07
         envFrom:
         - configMapRef:
             name: glitchtip-config

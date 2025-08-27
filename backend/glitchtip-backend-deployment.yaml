@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: migrate-and-collect
-        image: ermand172/glitchtip-backend:db47644ac12cc7d1
+        image: ermand172/glitchtip-backend:a672692e53914a07
         command: ["sh", "-c", "./manage.py migrate && ./manage.py collectstatic --noinput"]
         envFrom:
         - configMapRef:
@@ -38,7 +38,7 @@ spec:
               fieldPath: status.podIP
       containers:
       - name: glitchtip-backend
-        image: ermand172/glitchtip-backend:db47644ac12cc7d1
+        image: ermand172/glitchtip-backend:a672692e53914a07
         ports:
         - containerPort: 8080
         envFrom:

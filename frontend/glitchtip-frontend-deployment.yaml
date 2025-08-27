@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: glitchtip-frontend
-        image: ermand172/glitchtip-frontend:313b3b9652ff2f29
+        image: ermand172/glitchtip-frontend:a672692e53914a07
         ports:
         - containerPort: 80
         livenessProbe:
